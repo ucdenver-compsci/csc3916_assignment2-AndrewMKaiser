@@ -43,7 +43,10 @@ function getJSONObjectForMovieRequirement(req) {
 
 router.post('/signup', (req, res) => {
     if (!req.body.username || !req.body.password) {
-        res.json({success: false, msg: 'Please include both username and password to signup.'})
+        res.json({
+            success: false,
+            msg: 'Please include both username and password to signup.'
+        });
     } else {
         var newUser = {
             username: req.body.username,
@@ -93,6 +96,46 @@ router.route('/testcollection')
         res.json(o);
     }
     );
+
+router.route('/movies')
+    .get((req, res) => {
+        var response = getJSONObjectForMovieRequirement(req);
+        response.status = 200;
+        response.message = "GET movies";
+        response.query = req.query;
+        response.env = process.env.UNIQUE_KEY;
+        res.json(response);
+    })
+    .post((req, res) => {
+        var response = getJSONObjectForMovieRequirement(req);
+        response.status = 200;
+        response.message = "movie saved";
+        response.query = req.query;
+        response.env = process.env.UNIQUE_KEY;
+        res.json(response);
+    })
+    .put(authJwtController.isAuthenticated, (req, res) => {
+        var response = getJSONObjectForMovieRequirement(req);
+        response.status = 200;
+        response.message = "movie updated";
+        response.query = req.query;
+        response.env = process.env.UNIQUE_KEY;
+        res.json(response);
+    })
+    .delete(authController.isAuthenticated, (req, res) => {
+        var response = getJSONObjectForMovieRequirement(req);
+        response.status = 200;
+        response.message = "movie deleted";
+        response.query = req.query; // Include query params in the response
+        response.env = process.env.UNIQUE_KEY; // Explicitly include the unique key
+        res.json(response);
+    })
+    .all((req, res) => {
+        // Any other HTTP Method
+        // Returns a message stating that the HTTP method is unsupported.
+        res.status(405).send({ message: 'HTTP method not supported.' });
+    });
+
     
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
