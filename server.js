@@ -68,7 +68,7 @@ router.route('/signup')
     .all( (req, res) => {
         // Any other HTTP Method
         // Returns a message stating that the HTTP method is unsupported.
-        res.status(405).send({ message: 'HTTP method not supported.' });
+        res.status(405).send({ msg: 'HTTP method not supported.' });
     }
     );
 
@@ -93,7 +93,7 @@ router.route('/signin')
     .all( (req, res) => {
         // Any other HTTP Method
         // Returns a message stating that the HTTP method is unsupported.
-        res.status(405).send({ message: 'HTTP method not supported.' });
+        res.status(405).send({ msg: 'HTTP method not supported.' });
     }
     );
 
