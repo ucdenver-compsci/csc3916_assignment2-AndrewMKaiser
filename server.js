@@ -45,39 +45,57 @@ function getJSONObjectForMovieRequirement(req) {
     return json;
 }
 
-router.post('/signup', (req, res) => {
-    if (!req.body.username || !req.body.password) {
-        res.json({
-            success: false,
-            msg: 'Please include both username and password to signup.'
-        });
-    } else {
-        var newUser = {
-            username: req.body.username,
-            password: req.body.password
-        };
 
-        db.save(newUser); //no duplicate checking
-        res.json({success: true, msg: 'Successfully created new user.'})
-    }
-});
+router.route('/signup')
+    .post( (req, res) => {
+        if (!req.body.username || !req.body.password) {
+            res.json({
+                success: false,
+                msg: 'Please include both username and password to signup.'
+            });
+        } else {
+            var newUser = {
+                username: req.body.username,
+                password: req.body.password
+            };
 
-router.post('/signin', (req, res) => {
-    var user = db.findOne(req.body.username);
-
-    if (!user) {
-        res.status(401).send({success: false, msg: 'Authentication failed. User not found.'});
-    } else {
-        if (req.body.password == user.password) {
-            var userToken = { id: user.id, username: user.username };
-            var token = jwt.sign(userToken, process.env.SECRET_KEY);
-            res.json ({success: true, token: 'JWT ' + token});
-        }
-        else {
-            res.status(401).send({success: false, msg: 'Authentication failed.'});
+            db.save(newUser); //no duplicate checking
+            res.json({success: true, msg: 'Successfully created new user.'})
         }
     }
-});
+    )
+
+    .all( (req, res) => {
+        // Any other HTTP Method
+        // Returns a message stating that the HTTP method is unsupported.
+        res.status(405).send({ message: 'HTTP method not supported.' });
+    }
+    );
+
+router.route('/signin')
+    .post((req, res) => {
+        var user = db.findOne(req.body.username);
+
+        if (!user) {
+            res.status(401).send({success: false, msg: 'Authentication failed. User not found.'});
+        } else {
+            if (req.body.password == user.password) {
+                var userToken = { id: user.id, username: user.username };
+                var token = jwt.sign(userToken, process.env.SECRET_KEY);
+                res.json ({success: true, token: 'JWT ' + token});
+            }
+            else {
+                res.status(401).send({success: false, msg: 'Authentication failed.'});
+            }
+        }
+        })
+    
+    .all( (req, res) => {
+        // Any other HTTP Method
+        // Returns a message stating that the HTTP method is unsupported.
+        res.status(405).send({ message: 'HTTP method not supported.' });
+    }
+    );
 
 router.route('/testcollection')
     .delete(authController.isAuthenticated, (req, res) => {
