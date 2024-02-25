@@ -148,8 +148,8 @@ router.route('/movies')
         var response = getJSONObjectForMovieRequirement(req);
         response.status = 200;
         response.message = "movie deleted";
-        response.query = req.query; // Include query params in the response
-        response.env = process.env.UNIQUE_KEY; // Explicitly include the unique key
+        response.query = req.query;
+        response.env = process.env.UNIQUE_KEY;
         res.json(response);
     })
     .all((req, res) => {
